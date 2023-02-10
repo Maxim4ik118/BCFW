@@ -91,7 +91,7 @@ export class App extends React.Component {
 
   addProduct = product => {
     if (this.state.products.some(p => p.title === product.title)) {
-      // alert(`Product ${product.title} is already exists!`);
+      alert(`Product ${product.title} is already exists!`);
       return;
     }
 
@@ -108,6 +108,12 @@ export class App extends React.Component {
     // }));
   };
 
+  deleteProduct = productId => {
+    this.setState({
+      products: this.state.products.filter(product => product.id !== productId),
+    });
+  };
+
   handleFilter = ({ target: { value } }) => {
     this.setState({
       filterTerm: value,
@@ -122,7 +128,7 @@ export class App extends React.Component {
         .includes(this.state.filterTerm.toLowerCase())
     );
     //   'taco xxl'  -> 'co x'
-    
+
     return (
       <div style={styles}>
         <ProductForm onAddProduct={this.addProduct} title="Додати товар" />
@@ -130,7 +136,10 @@ export class App extends React.Component {
           onFilterChange={this.handleFilter}
           value={this.state.filterTerm}
         />
-        <ProductList products={filteredProducts} />
+        <ProductList
+          deleteProduct={this.deleteProduct}
+          products={filteredProducts}
+        />
       </div>
     );
   }

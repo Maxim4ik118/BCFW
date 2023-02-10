@@ -48,13 +48,18 @@ class ProductForm extends Component {
     };
 
     this.props.onAddProduct(product);
+    
+    this.reset();
+  };
+
+  reset() {
     this.setState({
       name: '',
       price: '',
       hasDiscount: false,
       discount: '',
     });
-  };
+  }
 
   render() {
     return (

@@ -3,12 +3,18 @@ import PropTypes from 'prop-types';
 
 import { Product } from 'components';
 
-function ProductList({ products }) {
+function ProductList({ products, deleteProduct = () => {} }) {
   return (
     <div>
       {products?.length > 0 &&
         products.map(product => {
-          return <Product key={product.id} {...product} />;
+          return (
+            <Product
+              key={product.id}
+              deleteProduct={deleteProduct}
+              {...product}
+            />
+          );
         })}
     </div>
   );
@@ -27,7 +33,7 @@ ProductList.propTypes = {
     }).isRequired
   ).isRequired,
 
-  anotherProducts: PropTypes.array
+  deleteProduct: PropTypes.func,
 };
 
 export default ProductList;

@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import { StyledProduct, StyledProductBtn } from './Styled';
 
 const Product = ({
-  onDelete = () => {},
   id,
   img,
-  price,
+  price = 0,
   discount = {},
-  title,
+  title = "",
+  deleteProduct = () => {},
 }) => {
   // const { image, price, discount = {}, title } = props;
   const hasDiscount = discount.hasOwnProperty('value') && discount?.value;
@@ -24,17 +24,17 @@ const Product = ({
           Price: {price}$
           <span className="productDiscount">DISCOUNT -{discount.value}%</span>
         </p>
-        <StyledProductBtn onClick={() => onDelete(id)} type="button">
+        <StyledProductBtn onClick={() => deleteProduct(id)} type="button">
           Delete
         </StyledProductBtn>
-        <StyledProductBtn type="button">Buy now</StyledProductBtn>
+        {/* <StyledProductBtn type="button">Buy now</StyledProductBtn> */}
       </div>
     </StyledProduct>
   );
 };
 
 Product.propTypes = {
-  onDelete: PropTypes.func,
+  deleteProduct: PropTypes.func,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   img: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
