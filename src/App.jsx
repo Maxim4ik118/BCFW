@@ -1,7 +1,10 @@
 import React from 'react';
-import { nanoid } from 'nanoid';
-import { Button, Filter, ProductForm, ProductList } from 'components';
+
+import { requestComments, requestPosts } from 'services/api';
+// import { Button, Filter, ProductForm, ProductList } from 'components';
 import Details from 'components/Details/Details';
+import Loader from 'components/Loader/Loader';
+import { CommentsList, Item, ListsContainer, PostsList } from 'App.styled';
 
 const styles = {
   color: '#010101',
@@ -60,80 +63,64 @@ const productsData = [
 
 */
 
+/*
+Робота з API
+1. Спроектувати стейт з трьома полями(data,isLoading,error)
+2. Зробити функцію з запитом(не забуваємо про try/catch)
+3. Опрацювати виключення(помилки)
+4. Відобразити індикатор завантаження під час HTTP-запиту
+5. В src створити папку services, а в ній файлик api.js
+6. Написати вашу функцію СЕРВІС. 
+*/
+
 export class App extends React.Component {
   state = {
-    products: JSON.parse(localStorage.getItem('products')) ?? [],
-    filterTerm: '',
     showDetails: false,
+    selectedPostId: null,
+
+    posts: null,
+    comments: null,
+    isLoading: false,
+    error: null,
   };
 
-  componentDidMount() {
-    // if (JSON.parse(localStorage.getItem('products'))) {
-    //   this.setState({
-    //     products: JSON.parse(localStorage.getItem('products')),
-    //   });
-    // }
-    /*
-    Функція, що спрацьовує лише один раз, після народження
-    компоненти.
+  async fetchPosts() {
+    try {
+      this.setState({ isLoading: true });
 
-    1. Надсилаються HTTP запити(мережеві) при появі розмітки.
-    2. Вішаються глобальні обробники подій (addEventListener)
-    3. Встановлюються таймери setInterval() | setTimeout()
-    4. Звернення до зовнішніх API (localStorage)
-    */
+      const posts = await requestPosts();
+
+      this.setState({ posts: posts });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ isLoading: false });
+    }
   }
 
-  componentWillUnmount() {
-    /*
-      Функція, що спрацьовує перед тим, як компонет буде
-      повністю видалений з DOM дерева(розмітки).
+  async fetchComments(postId) {
+    try {
+      this.setState({ isLoading: true });
 
-      1. Відхиляються HTTP запити(мережеві) при появі розмітки | junior+, middle+
-      2. Видаляти глобальні обробники подій (removeEventListener)
-      3. Очищувати таймери(прибирати) clearInterval(intervalId) | clearTimeout(timeoutId)
-    */
+      const comments = await requestComments(postId);
+
+      this.setState({ comments: comments });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  }
+
+  componentDidMount() {
+    this.fetchPosts();
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.products !== this.state.products) {
-      const stringifiedProducts = JSON.stringify(this.state.products);
-
-      localStorage.setItem('products', stringifiedProducts);
+    if (prevState.selectedPostId !== this.state.selectedPostId) {
+      this.fetchComments(this.state.selectedPostId);
     }
   }
-
-  addProduct = product => {
-    if (this.state.products.some(p => p.title === product.title)) {
-      alert(`Product ${product.title} is already exists!`);
-      return;
-    }
-
-    const finalProduct = {
-      id: nanoid(),
-      ...product,
-    };
-
-    this.setState({
-      products: [finalProduct, ...this.state.products],
-    });
-
-    // this.setState((prevState) => ({
-    //   products: [finalProduct, ...prevState.products],
-    // }));
-  };
-
-  deleteProduct = productId => {
-    this.setState({
-      products: this.state.products.filter(product => product.id !== productId),
-    });
-  };
-
-  handleFilter = ({ target: { value } }) => {
-    this.setState({
-      filterTerm: value,
-    });
-  };
 
   handleToggleDetails = () => {
     this.setState({
@@ -141,31 +128,72 @@ export class App extends React.Component {
     });
   };
 
-  render() {
-    const filteredProducts = this.state.products.filter(product =>
-      product.title
-        .toLowerCase()
-        .trim()
-        .includes(this.state.filterTerm.toLowerCase())
-    );
+  handleSelectPostId = postId => {
+    this.setState((prevState) => ({
+      selectedPostId: postId,
+    }));
+  };
 
+  render() {
     return (
       <div style={styles}>
         <button onClick={this.handleToggleDetails}>
           Сlick to {this.state.showDetails ? 'HIDE' : 'SHOW'} the details
         </button>
         {this.state.showDetails && <Details />}
-         
-        
-        <ProductForm onAddProduct={this.addProduct} title="Додати товар" />
-        <Filter
-          onFilterChange={this.handleFilter}
-          value={this.state.filterTerm}
-        />
-        <ProductList
-          deleteProduct={this.deleteProduct}
-          products={filteredProducts}
-        />
+
+        {this.state.isLoading && <Loader />}
+
+        {this.state.error !== null && (
+          <p>Oops, some error occured... Message: {this.state.error}</p>
+        )}
+
+        <ListsContainer>
+          <PostsList>
+            {this.state.posts !== null &&
+              this.state.posts.map(post => {
+                return (
+                  <li
+                    key={post.id}
+                    onClick={() => this.handleSelectPostId(post.id)}
+                    className={
+                      this.state.selectedPostId === post.id ? 'selected' : ''
+                    }
+                  >
+                    <h3>{post.title}</h3>
+                    <p>
+                      <b>Body:</b> {post.body}
+                    </p>
+                    <p>
+                      <b>PostId:</b>
+                      {post.id}
+                    </p>
+                    <p>
+                      <b>UserID:</b>
+                      {post.userId}
+                    </p>
+                  </li>
+                );
+              })}
+          </PostsList>
+          {this.state.comments !== null && (
+            <CommentsList>
+              {this.state.comments.map(comment => {
+                return (
+                  <li key={comment.id}>
+                    <h3>UserName: {comment.name}</h3>
+                    <p>
+                      <b>Email:</b> {comment.email}
+                    </p>
+                    <p>
+                      <b>Body:</b> {comment.body}
+                    </p>
+                  </li>
+                );
+              })}
+            </CommentsList>
+          )}
+        </ListsContainer>
       </div>
     );
   }
