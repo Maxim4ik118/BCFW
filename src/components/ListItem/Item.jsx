@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
+
+import { ModalContext } from 'context/ModalContext';
 
 function Item({ id, title, body, userId, selectedPostId, handleSelectPostId }) {
+  const { toggleDetails } = useContext(ModalContext);
+
   return (
     <li
       key={id}
-      onClick={() => handleSelectPostId("qweqweqwe")}
+      onClick={() => handleSelectPostId('qweqweqwe')}
       className={selectedPostId === id ? 'selected' : ''}
     >
       <h3>{title}</h3>
@@ -19,6 +23,7 @@ function Item({ id, title, body, userId, selectedPostId, handleSelectPostId }) {
         <b>UserID:</b>
         {userId}
       </p>
+      <button onClick={toggleDetails}>Toggle Details</button>
     </li>
   );
 }

@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { requestComments, requestPosts } from 'services/api';
 // import { Button, Filter, ProductForm, ProductList } from 'components';
 import Details from 'components/Details/Details';
 import Loader from 'components/Loader/Loader';
-import { CommentsList, ListsContainer, PostsList } from 'App.styled';
 import Item from './components/ListItem/Item';
+import { ModalContext } from 'context/ModalContext';
+
+import { CommentsList, ListsContainer, PostsList } from 'App.styled';
+import { ProductForm } from 'components';
 
 const styles = {
   color: '#010101',
@@ -58,98 +61,70 @@ const productsData = [
 */
 
 export const App = () => {
-  // state = {
-  //   showDetails: false,
-  //   selectedPostId: null,
-
-  //   posts: null,
-  //   comments: null,
-  //   isLoading: false,
-  //   error: null,
-  // };
-  const [showDetails, setShowDetails] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [posts, setPosts] = useState(null);
   const [comments, setComments] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { showDetails } = useContext(ModalContext);
+
   async function fetchPosts() {
     try {
-      // this.setState({ isLoading: true });
       setIsLoading(true);
 
       const posts = await requestPosts();
 
-      // this.setState({ posts: posts });
       setPosts(posts);
     } catch (error) {
-      // this.setState({ error: error.message });
       setError(error.message);
     } finally {
-      // this.setState({ isLoading: false });
       setIsLoading(false);
     }
   }
 
   async function fetchComments(postId) {
     try {
-      // this.setState({ isLoading: true });
       setIsLoading(true);
 
       const comments = await requestComments(postId);
 
-      // this.setState({ comments: comments });
       setComments(comments);
     } catch (error) {
-      // this.setState({ error: error.message });
       setError(error.message);
     } finally {
-      // this.setState({ isLoading: false });
       setIsLoading(false);
     }
   }
 
-  // componentDidMount() {
-  //   this.fetchPosts();
-  // }
   useEffect(() => {
     fetchPosts();
   }, []);
-  // componentDidUpdate(_, prevState) {
-  //   if (prevState.selectedPostId !== this.state.selectedPostId) {
-  //     this.fetchComments(this.state.selectedPostId);
-  //   }
-  // }
+
   useEffect(() => {
     if (selectedPostId === null) return;
 
     fetchComments(selectedPostId);
   }, [selectedPostId]);
 
-  const handleToggleDetails = () => {
-    // this.setState({
-    //   showDetails: !this.state.showDetails,
-    // });
-    setShowDetails(!showDetails); // 1 варіант
-    //  setShowDetails(prevState => !prevState); // 2 варіант
-  };
-
   const handleSelectPostId = postId => {
-    // this.setState((prevState) => ({
-    //   selectedPostId: postId,
-    // }));
     setSelectedPostId(postId);
   };
 
+  const onAddProduct = (data) => {
+    console.log('data: ', data);
+  }
+
   return (
     <div style={styles}>
-      <button onClick={handleToggleDetails}>
+      {/* <button onClick={handleToggleDetails}>
         Сlick to {showDetails ? 'HIDE' : 'SHOW'} the details
-      </button>
+      </button> */}
       {showDetails && <Details />}
 
       {isLoading && <Loader />}
+
+      <ProductForm onAddProduct={onAddProduct} title="Add Product" />
 
       {error !== null && <p>Oops, some error occured... Message: {error}</p>}
 
