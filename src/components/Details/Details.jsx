@@ -1,66 +1,127 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-class Details extends React.Component {
-  state = {
-    pressedKey: null,
-    count: 0,
+/*
+  1. useEffect(() => {
+    window.addEventListener('keydown', someFunc);
+
+    console.log('Компонент було відрендерено(вмонтовано)');
+
+    return () => { - componentWillUnmount
+      window.removeEventListener('keydown', someFunc);
+
+      console.log('Компонент було видалено з розмітки');
+    } 
+  }, []) - componentDidMount(пустий массив залежностей)
+
+  2. useEffect(() => {
+      if(dep1 === dep1InitialVal && dep2 === dep2InitialVal && dep3 === dep3InitialVal) return;
+      
+      console.log("Лічильник було збільшено!");
+     }, [dep1, dep2, dep3, ...]) - componentDidUpdate + componentDidMount (обов'язково робити перевірку на початкове значення)
+
+*/
+
+function Details(props) {
+  // const state = {
+  //   pressedKey: null,
+  //   count: {
+  //   increment: 0,
+  //   decrement: 0,
+  //  },
+  // };
+  //       geter        seter
+  const [pressedKey, setPressedKey] = useState(null);
+  const [count, setCount] = useState(null);
+
+  const handleIncrement = () => {
+    // this.setState(prevState => {
+    //   return {
+    //     count: prevState.count + 1,
+    //     pressedKey: "k",
+    //   };
+    // });
+
+    //            0             0     + 1
+    // setCount(prevState => ({
+    //   increment: prevState.increment + 1,
+    //   decrement: prevState.decrement - 1,
+    // }));
+
+    if (count === null) {
+      setCount(1);
+    } else {
+      setCount(prevState => prevState + 1);
+    }
   };
 
-  handleIncrement = () => {
-    this.setState((state) => {
-        return {
-            count: state.count + 1
-        }
-    });
-  }
+  const onKeyDown = event => {
+    // this.setState({
+    //   pressedKey: event.key,
+    // });
 
-  onKeyDown = event => {
-    this.setState({
-      pressedKey: event.key,
-    });
+    setPressedKey(event.key);
   };
 
-  // 1 | 2 | 3
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
+  useEffect(() => {
+    window.addEventListener('keydown', onKeyDown);
 
     console.log('Деталі було відрендерено(вмонтовано)');
-  }
 
-  componentDidUpdate(_, prevState) {
-    if(prevState.count !== this.state.count) {
-        console.log("Лічильник було збільшено!");
-    }
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
 
-    if(prevState.pressedKey !== this.state.pressedKey) {
-        console.log("Користувач натиснув кнопку на клавіатурі!");
-    }
+      console.log('Деталі було видалено з розмітки');
+    };
+  }, []);
 
-    // console.log('Компонент оновився, бо змінилися пропси, або стейт');
-  }
+  useEffect(() => {
+    if (count === null) return;
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
+    console.log('Лічильник було збільшено!');
+  }, [count]);
 
-    console.log('Деталі було видалено з розмітки');
-  }
+  useEffect(() => {
+    if (pressedKey === null) return;
 
-  render() {
-    return (
-      <div>
-        <h2>Some detail title</h2>
-        <h3>You`ve just clicked on "{this.state.pressedKey}" button</h3>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
-          molestias, alias corporis tempore id commodi reprehenderit quibusdam
-          est cupiditate aspernatur minima? Sapiente quos beatae est? Debitis at
-          facilis culpa sit?
-        </p>
-        <p>Counter: {this.state.count}</p>
-        <button onClick={this.handleIncrement}>Click to increment</button>
-      </div>
-    );
-  }
+    console.log('Користувач натиснув кнопку на клавіатурі!');
+  }, [pressedKey]);
+
+  // componentDidMount() {
+  //   window.addEventListener('keydown', this.onKeyDown);
+
+  //   console.log('Деталі було відрендерено(вмонтовано)');
+  // }
+
+  // componentDidUpdate(_, prevState) {
+  //   if(prevState.count !== this.state.count) {
+  //       console.log("Лічильник було збільшено!");
+  //   }
+
+  //   if(prevState.pressedKey !== this.state.pressedKey) {
+  //       console.log("Користувач натиснув кнопку на клавіатурі!");
+  //   }
+  // }
+
+  // componentWillUnmount() {
+  //   window.removeEventListener('keydown', this.onKeyDown);
+
+  //   console.log('Деталі було видалено з розмітки');
+  // }
+
+  return (
+    <div>
+      <h2>Some detail title</h2>
+      <h3>You`ve just clicked on "{pressedKey}" button</h3>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
+        molestias, alias corporis tempore id commodi reprehenderit quibusdam est
+        cupiditate aspernatur minima? Sapiente quos beatae est? Debitis at
+        facilis culpa sit?
+      </p>
+      <p>Counter: {count ?? 0}</p>
+      <button onClick={handleIncrement}>Click to increment</button>
+    </div>
+  );
 }
 
 export default Details;

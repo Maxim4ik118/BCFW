@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { requestComments, requestPosts } from 'services/api';
 // import { Button, Filter, ProductForm, ProductList } from 'components';
 import Details from 'components/Details/Details';
 import Loader from 'components/Loader/Loader';
-import { CommentsList, Item, ListsContainer, PostsList } from 'App.styled';
+import { CommentsList, ListsContainer, PostsList } from 'App.styled';
+import Item from './components/ListItem/Item';
 
 const styles = {
   color: '#010101',
@@ -56,145 +57,134 @@ const productsData = [
 4. Файли стилів
 */
 
-/*
-1 - constructor()
-2 - render()
-3 - componentDidMount()
+export const App = () => {
+  // state = {
+  //   showDetails: false,
+  //   selectedPostId: null,
 
-*/
+  //   posts: null,
+  //   comments: null,
+  //   isLoading: false,
+  //   error: null,
+  // };
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [posts, setPosts] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-/*
-Робота з API
-1. Спроектувати стейт з трьома полями(data,isLoading,error)
-2. Зробити функцію з запитом(не забуваємо про try/catch)
-3. Опрацювати виключення(помилки)
-4. Відобразити індикатор завантаження під час HTTP-запиту
-5. В src створити папку services, а в ній файлик api.js
-6. Написати вашу функцію СЕРВІС. 
-*/
-
-export class App extends React.Component {
-  state = {
-    showDetails: false,
-    selectedPostId: null,
-
-    posts: null,
-    comments: null,
-    isLoading: false,
-    error: null,
-  };
-
-  async fetchPosts() {
+  async function fetchPosts() {
     try {
-      this.setState({ isLoading: true });
+      // this.setState({ isLoading: true });
+      setIsLoading(true);
 
       const posts = await requestPosts();
 
-      this.setState({ posts: posts });
+      // this.setState({ posts: posts });
+      setPosts(posts);
     } catch (error) {
-      this.setState({ error: error.message });
+      // this.setState({ error: error.message });
+      setError(error.message);
     } finally {
-      this.setState({ isLoading: false });
+      // this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   }
 
-  async fetchComments(postId) {
+  async function fetchComments(postId) {
     try {
-      this.setState({ isLoading: true });
+      // this.setState({ isLoading: true });
+      setIsLoading(true);
 
       const comments = await requestComments(postId);
 
-      this.setState({ comments: comments });
+      // this.setState({ comments: comments });
+      setComments(comments);
     } catch (error) {
-      this.setState({ error: error.message });
+      // this.setState({ error: error.message });
+      setError(error.message);
     } finally {
-      this.setState({ isLoading: false });
+      // this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   }
 
-  componentDidMount() {
-    this.fetchPosts();
-  }
+  // componentDidMount() {
+  //   this.fetchPosts();
+  // }
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  // componentDidUpdate(_, prevState) {
+  //   if (prevState.selectedPostId !== this.state.selectedPostId) {
+  //     this.fetchComments(this.state.selectedPostId);
+  //   }
+  // }
+  useEffect(() => {
+    if (selectedPostId === null) return;
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.selectedPostId !== this.state.selectedPostId) {
-      this.fetchComments(this.state.selectedPostId);
-    }
-  }
+    fetchComments(selectedPostId);
+  }, [selectedPostId]);
 
-  handleToggleDetails = () => {
-    this.setState({
-      showDetails: !this.state.showDetails,
-    });
+  const handleToggleDetails = () => {
+    // this.setState({
+    //   showDetails: !this.state.showDetails,
+    // });
+    setShowDetails(!showDetails); // 1 варіант
+    //  setShowDetails(prevState => !prevState); // 2 варіант
   };
 
-  handleSelectPostId = postId => {
-    this.setState((prevState) => ({
-      selectedPostId: postId,
-    }));
+  const handleSelectPostId = postId => {
+    // this.setState((prevState) => ({
+    //   selectedPostId: postId,
+    // }));
+    setSelectedPostId(postId);
   };
 
-  render() {
-    return (
-      <div style={styles}>
-        <button onClick={this.handleToggleDetails}>
-          Сlick to {this.state.showDetails ? 'HIDE' : 'SHOW'} the details
-        </button>
-        {this.state.showDetails && <Details />}
+  return (
+    <div style={styles}>
+      <button onClick={handleToggleDetails}>
+        Сlick to {showDetails ? 'HIDE' : 'SHOW'} the details
+      </button>
+      {showDetails && <Details />}
 
-        {this.state.isLoading && <Loader />}
+      {isLoading && <Loader />}
 
-        {this.state.error !== null && (
-          <p>Oops, some error occured... Message: {this.state.error}</p>
+      {error !== null && <p>Oops, some error occured... Message: {error}</p>}
+
+      <ListsContainer>
+        <PostsList>
+          {posts !== null &&
+            posts.map(post => {
+              return (
+                <Item
+                  {...post}
+                  key={post.id}
+                  selectedPostId={selectedPostId}
+                  handleSelectPostId={handleSelectPostId}
+                />
+              );
+            })}
+        </PostsList>
+        {comments !== null && (
+          <CommentsList>
+            {comments.map(comment => {
+              return (
+                <li key={comment.id}>
+                  <h3>UserName: {comment.name}</h3>
+                  <p>
+                    <b>Email:</b> {comment.email}
+                  </p>
+                  <p>
+                    <b>Body:</b> {comment.body}
+                  </p>
+                </li>
+              );
+            })}
+          </CommentsList>
         )}
-
-        <ListsContainer>
-          <PostsList>
-            {this.state.posts !== null &&
-              this.state.posts.map(post => {
-                return (
-                  <li
-                    key={post.id}
-                    onClick={() => this.handleSelectPostId(post.id)}
-                    className={
-                      this.state.selectedPostId === post.id ? 'selected' : ''
-                    }
-                  >
-                    <h3>{post.title}</h3>
-                    <p>
-                      <b>Body:</b> {post.body}
-                    </p>
-                    <p>
-                      <b>PostId:</b>
-                      {post.id}
-                    </p>
-                    <p>
-                      <b>UserID:</b>
-                      {post.userId}
-                    </p>
-                  </li>
-                );
-              })}
-          </PostsList>
-          {this.state.comments !== null && (
-            <CommentsList>
-              {this.state.comments.map(comment => {
-                return (
-                  <li key={comment.id}>
-                    <h3>UserName: {comment.name}</h3>
-                    <p>
-                      <b>Email:</b> {comment.email}
-                    </p>
-                    <p>
-                      <b>Body:</b> {comment.body}
-                    </p>
-                  </li>
-                );
-              })}
-            </CommentsList>
-          )}
-        </ListsContainer>
-      </div>
-    );
-  }
-}
+      </ListsContainer>
+    </div>
+  );
+};
