@@ -8,6 +8,14 @@ export const requestPosts = async () => {
   return data;
 };
 
+export const requestPostDetails = async (postId = '1') => {
+  const { data } = await axios.get(
+    `https://jsonplaceholder.typicode.com/posts/${postId}`
+  );
+
+  return data;
+};
+
 export const requestComments = async (postId = '1') => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com/posts/${postId}/comments`

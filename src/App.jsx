@@ -1,14 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Route, Routes } from 'react-router-dom';
 
 import { requestComments, requestPosts } from 'services/api';
 // import { Button, Filter, ProductForm, ProductList } from 'components';
-import Details from 'components/Details/Details';
-import Loader from 'components/Loader/Loader';
-import Item from './components/ListItem/Item';
-import { ModalContext } from 'context/ModalContext';
+// import Details from 'components/Details/Details';
+import HomePage from 'pages/Posts/HomePage';
+import SearchPage from 'pages/Search/SearchPage';
+import PostDetailsPage from 'pages/PostDetails/PostDetailsPage';
 
-import { CommentsList, ListsContainer, PostsList } from 'App.styled';
-import { ProductForm } from 'components';
+import Loader from 'components/Loader/Loader';
+// import Item from './components/ListItem/Item';
+
+// import { ProductForm } from 'components';
+import {
+  // CommentsList,
+  // ListsContainer,
+  // PostsList,
+  StyledNavLink,
+} from 'App.styled';
 
 const styles = {
   color: '#010101',
@@ -61,105 +70,24 @@ const productsData = [
 */
 
 export const App = () => {
-  const [selectedPostId, setSelectedPostId] = useState(null);
-  const [posts, setPosts] = useState(null);
-  const [comments, setComments] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const { showDetails } = useContext(ModalContext);
-
-  async function fetchPosts() {
-    try {
-      setIsLoading(true);
-
-      const posts = await requestPosts();
-
-      setPosts(posts);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function fetchComments(postId) {
-    try {
-      setIsLoading(true);
-
-      const comments = await requestComments(postId);
-
-      setComments(comments);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    if (selectedPostId === null) return;
-
-    fetchComments(selectedPostId);
-  }, [selectedPostId]);
-
-  const handleSelectPostId = postId => {
-    setSelectedPostId(postId);
-  };
-
-  const onAddProduct = (data) => {
-    console.log('data: ', data);
-  }
-
   return (
     <div style={styles}>
-      {/* <button onClick={handleToggleDetails}>
-        Сlick to {showDetails ? 'HIDE' : 'SHOW'} the details
-      </button> */}
-      {showDetails && <Details />}
+      <header>
+        <nav>
+          <StyledNavLink to="/">Home</StyledNavLink>
+          <StyledNavLink to="/posts-search">Search</StyledNavLink>
+          <StyledNavLink to="/info">Info</StyledNavLink>
+        </nav>
+      </header>
 
-      {isLoading && <Loader />}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
+        <Route path="/posts-search" element={<SearchPage />} />
 
-      <ProductForm onAddProduct={onAddProduct} title="Add Product" />
-
-      {error !== null && <p>Oops, some error occured... Message: {error}</p>}
-
-      <ListsContainer>
-        <PostsList>
-          {posts !== null &&
-            posts.map(post => {
-              return (
-                <Item
-                  {...post}
-                  key={post.id}
-                  selectedPostId={selectedPostId}
-                  handleSelectPostId={handleSelectPostId}
-                />
-              );
-            })}
-        </PostsList>
-        {comments !== null && (
-          <CommentsList>
-            {comments.map(comment => {
-              return (
-                <li key={comment.id}>
-                  <h3>UserName: {comment.name}</h3>
-                  <p>
-                    <b>Email:</b> {comment.email}
-                  </p>
-                  <p>
-                    <b>Body:</b> {comment.body}
-                  </p>
-                </li>
-              );
-            })}
-          </CommentsList>
-        )}
-      </ListsContainer>
+        <Route path="*" element={<div>Page not found </div>} />
+      </Routes>
+    
     </div>
   );
 };

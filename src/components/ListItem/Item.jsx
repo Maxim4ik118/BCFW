@@ -1,31 +1,35 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-import { ModalContext } from 'context/ModalContext';
-
-function Item({ id, title, body, userId, selectedPostId, handleSelectPostId }) {
-  const { toggleDetails } = useContext(ModalContext);
-
+function Item({ id, title, body, userId }) {
+  // id = 58
+  // /posts/58
   return (
-    <li
-      key={id}
-      onClick={() => handleSelectPostId('qweqweqwe')}
-      className={selectedPostId === id ? 'selected' : ''}
-    >
-      <h3>{title}</h3>
-      <p>
-        <b>Body:</b> {body}
-      </p>
-      <p>
-        <b>PostId:</b>
-        {id}
-      </p>
-      <p>
-        <b>UserID:</b>
-        {userId}
-      </p>
-      <button onClick={toggleDetails}>Toggle Details</button>
+    <li>
+      <Link to={`/posts/${id}`}>
+        <h3>{title}</h3>
+        <p>
+          <b>Body:</b> {body}
+        </p>
+        <p>
+          <b>PostId:</b>
+          {id}
+        </p>
+        <p>
+          <b>UserID:</b>
+          {userId}
+        </p>
+      </Link>
     </li>
   );
+}
+
+Item.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  body: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
 }
 
 export default Item;
