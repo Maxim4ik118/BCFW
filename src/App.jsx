@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
-import { requestComments, requestPosts } from 'services/api';
-// import { Button, Filter, ProductForm, ProductList } from 'components';
-// import Details from 'components/Details/Details';
-import HomePage from 'pages/Posts/HomePage';
-import SearchPage from 'pages/Search/SearchPage';
-import PostDetailsPage from 'pages/PostDetails/PostDetailsPage';
+// import HomePage from 'pages/Posts/HomePage';
+// import SearchPage from 'pages/Search/SearchPage';
+// import PostDetailsPage from 'pages/PostDetails/PostDetailsPage';
 
 import Loader from 'components/Loader/Loader';
-// import Item from './components/ListItem/Item';
 
-// import { ProductForm } from 'components';
-import {
-  // CommentsList,
-  // ListsContainer,
-  // PostsList,
-  StyledNavLink,
-} from 'App.styled';
+import { StyledNavLink } from 'App.styled';
+
+const LazyHomePage = lazy(() => import('pages/Posts/HomePage'));
+const LazySearchPage = lazy(() => import('pages/Search/SearchPage'));
+const LazyPostDetailsPage = lazy(() =>
+  import('pages/PostDetails/PostDetailsPage')
+);
 
 const styles = {
   color: '#010101',
@@ -76,18 +72,20 @@ export const App = () => {
         <nav>
           <StyledNavLink to="/">Home</StyledNavLink>
           <StyledNavLink to="/posts-search">Search</StyledNavLink>
-          <StyledNavLink to="/info">Info</StyledNavLink>
         </nav>
       </header>
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
-        <Route path="/posts-search" element={<SearchPage />} />
+      <main>
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<LazyHomePage />} />
+            <Route path="/posts/:postId/*" element={<LazyPostDetailsPage />} />
+            <Route path="/posts-search" element={<LazySearchPage />} />
 
-        <Route path="*" element={<div>Page not found </div>} />
-      </Routes>
-    
+            <Route path="*" element={<div>Page not found </div>} />
+          </Routes>
+        </Suspense>
+      </main>
     </div>
   );
 };
