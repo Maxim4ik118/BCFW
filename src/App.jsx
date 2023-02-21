@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 
 // import HomePage from 'pages/Posts/HomePage';
 // import SearchPage from 'pages/Search/SearchPage';
@@ -72,6 +72,13 @@ export const App = () => {
         <nav>
           <StyledNavLink to="/">Home</StyledNavLink>
           <StyledNavLink to="/posts-search">Search</StyledNavLink>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://app.theowledge.com/"
+          >
+            OwlEdge
+          </a>
         </nav>
       </header>
 
@@ -82,7 +89,14 @@ export const App = () => {
             <Route path="/posts/:postId/*" element={<LazyPostDetailsPage />} />
             <Route path="/posts-search" element={<LazySearchPage />} />
 
-            <Route path="*" element={<div>Page not found </div>} />
+            <Route
+              path="*"
+              element={
+                <div>
+                  Page not found <Link to="/">Go Home</Link>{' '}
+                </div>
+              }
+            />
           </Routes>
         </Suspense>
       </main>
