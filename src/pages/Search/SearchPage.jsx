@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import SearchForm from 'components/SearchForm/SearchForm';
-
-import { requestPostsById } from 'services/api';
 import Item from 'components/ListItem/Item';
-import { PostsList } from 'App.styled';
 import Loader from 'components/Loader/Loader';
 
+import { requestPostsById } from 'services/api';
+
+import { PostsList } from 'App.styled';
+import { setError, setIsLoading, setPosts } from 'redux/postsSlice';
+
 function SearchPage() {
-  const [posts, setPosts] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [posts, setPosts] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  const posts = useSelector(state => state.postData.posts);
+  const isLoading = useSelector(state => state.postData.isLoading);
+  const error = useSelector(state => state.postData.error);
+  const dispatch = useDispatch();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
 
@@ -22,20 +30,20 @@ function SearchPage() {
 
     async function fetchPostsById(postId) {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
 
         const post = await requestPostsById(postId);
 
-        setPosts([post]);
+        dispatch(setPosts([post]));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     }
 
     fetchPostsById(searchQuery);
-  }, [searchQuery]);
+  }, [searchQuery, dispatch]);
 
   const onSubmit = searchValue => {
     setSearchParams({ query: searchValue });

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import {
   Link,
   NavLink,
@@ -7,40 +7,45 @@ import {
   useLocation,
   useParams,
 } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 // import CommentsPage from 'pages/Comments/CommentsPage';
 import Loader from 'components/Loader/Loader';
 
 import { requestPostDetails } from 'services/api';
+import { setDetails, setError, setIsLoading } from 'redux/postsSlice';
 
 const LazyCommentsPage = lazy(() => import('pages/Comments/CommentsPage'));
 
 function PostDetailsPage() {
   const { postId } = useParams();
   const location = useLocation();
-  console.log('PostDetailsPage location: ', location);
 
-  const [details, setDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [details, setDetails] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  const details = useSelector(state => state.postData.details);
+  const isLoading = useSelector(state => state.postData.isLoading);
+  const error = useSelector(state => state.postData.error);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchPostDetails(postId) {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
 
         const details = await requestPostDetails(postId);
 
-        setDetails(details);
+        dispatch(setDetails(details));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     }
 
     fetchPostDetails(postId);
-  }, [postId]);
+  }, [postId, dispatch]);
 
   const isCommentsVisible = location.pathname.includes('comments');
   return (

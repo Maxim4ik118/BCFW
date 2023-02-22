@@ -33,25 +33,8 @@ function Details(props) {
   const [pressedKey, setPressedKey] = useState(null);
   const [count, setCount] = useState(null);
 
-  const handleIncrement = () => {
-    // this.setState(prevState => {
-    //   return {
-    //     count: prevState.count + 1,
-    //     pressedKey: "k",
-    //   };
-    // });
-
-    //            0             0     + 1
-    // setCount(prevState => ({
-    //   increment: prevState.increment + 1,
-    //   decrement: prevState.decrement - 1,
-    // }));
-
-    if (count === null) {
-      setCount(1);
-    } else {
-      setCount(prevState => prevState + 1);
-    }
+  const onClick = (id) => { // 3
+    
   };
 
   const onKeyDown = event => {
@@ -119,7 +102,7 @@ function Details(props) {
         facilis culpa sit?
       </p>
       <p>Counter: {count ?? 0}</p>
-      <button onClick={handleIncrement}>Click to increment</button>
+      <button onClick={() => onClick(3)}>Click to increment</button>
     </div>
   );
 }
