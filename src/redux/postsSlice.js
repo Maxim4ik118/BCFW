@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  testInputText: '',
   details: null,
+  comments: null,
   posts: null,
   isLoading: false,
   error: null,
@@ -14,6 +16,17 @@ const postsSlice = createSlice({
   initialState: initialState,
   // Об'єкт редюсерів
   reducers: {
+    setTestInputText(state, action) {
+      state.testInputText = action.payload;
+    },
+    setComments(state, action) {
+      // action - { type: "posts/setComments", payload: [{}, {}, ..., {}] }
+      state.comments = action.payload;
+    },
+    clearComments(state) {
+      // action - { type: "posts/clearComments" }
+      state.comments = null;
+    },
     setDetails(state, action) {
       // action - { type: "posts/setDetails", payload: {...} }
       state.details = action.payload;
@@ -33,6 +46,14 @@ const postsSlice = createSlice({
 });
 
 // Генератори екшенів(інструкцій)
-export const { setDetails, setPosts, setIsLoading, setError } = postsSlice.actions;
+export const {
+  setTestInputText,
+  clearComments,
+  setComments,
+  setDetails,
+  setPosts,
+  setIsLoading,
+  setError,
+} = postsSlice.actions;
 // Експортуємо налаштований редюсер слайсу
 export const postsReducer = postsSlice.reducer;
