@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from 'components/Loader/Loader';
 
-import { requestComments } from 'services/api';
+import { getPostComments } from 'redux/operations';
 
 import { CommentsList } from 'App.styled';
-import { useParams } from 'react-router-dom';
-// import { clearComments } from 'redux/postsSlice';
-// import { setComments, setError, setIsLoading } from 'redux/postsSlice';
 
 function CommentsPage() {
   const { postId } = useParams();
@@ -20,27 +18,7 @@ function CommentsPage() {
   useEffect(() => {
     if (postId === null) return;
 
-    async function fetchComments(postId) {
-      try {
-        // dispatch(setIsLoading(true))
-        dispatch({ type: 'posts/setIsLoading', payload: true });
-
-        const comments = await requestComments(postId);
-
-        // dispatch(setComments(comments))
-        dispatch({ type: 'posts/setComments', payload: comments });
-        // dispatch(clearComments());
-        // dispatch({ type: 'posts/clearComments' });
-      } catch (error) {
-        // dispatch(setError(error))
-        dispatch({ type: 'posts/setError', payload: error.message });
-      } finally {
-        // dispatch(setIsLoading(false))
-        dispatch({ type: 'posts/setIsLoading', payload: false });
-      }
-    }
-
-    fetchComments(postId);
+    dispatch(getPostComments(postId))
   }, [postId, dispatch]);
 
   return (

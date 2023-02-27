@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import {  Navigate, Route, Routes } from 'react-router-dom';
 
 // import HomePage from 'pages/Posts/HomePage';
 // import SearchPage from 'pages/Search/SearchPage';
@@ -20,38 +20,38 @@ const styles = {
   paddingTop: '80px',
 };
 
-const productsData = [
-  {
-    id: 1,
-    img: 'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?dpr=2&h=480&w=640',
-    price: 10.99,
-    title: 'Taco XXL',
-    discount: {
-      value: 17,
-    },
-  },
-  {
-    id: 2,
-    img: 'https://images.unsplash.com/photo-1668534576765-d9fa656e26c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMnx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-    price: 11.99,
-    title: 'Taco 2XXL EXTRA CHEESE',
-    discount: {
-      value: 23,
-    },
-  },
-  {
-    id: 3,
-    img: 'https://plus.unsplash.com/premium_photo-1663924749013-7259f695b183?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxOXx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-    price: 7.77,
-    title: 'Taco XS',
-  },
-  {
-    id: 4,
-    img: 'https://images.unsplash.com/photo-1667684550432-35d19dd88940?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDh8cVBZc0R6dkpPWWN8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
-    price: 6.66,
-    title: 'Taco M',
-  },
-];
+// const productsData = [
+//   {
+//     id: 1,
+//     img: 'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?dpr=2&h=480&w=640',
+//     price: 10.99,
+//     title: 'Taco XXL',
+//     discount: {
+//       value: 17,
+//     },
+//   },
+//   {
+//     id: 2,
+//     img: 'https://images.unsplash.com/photo-1668534576765-d9fa656e26c2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMnx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
+//     price: 11.99,
+//     title: 'Taco 2XXL EXTRA CHEESE',
+//     discount: {
+//       value: 23,
+//     },
+//   },
+//   {
+//     id: 3,
+//     img: 'https://plus.unsplash.com/premium_photo-1663924749013-7259f695b183?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxOXx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
+//     price: 7.77,
+//     title: 'Taco XS',
+//   },
+//   {
+//     id: 4,
+//     img: 'https://images.unsplash.com/photo-1667684550432-35d19dd88940?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDh8cVBZc0R6dkpPWWN8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60',
+//     price: 6.66,
+//     title: 'Taco M',
+//   },
+// ];
 
 /*
 Рект компонент перемальовується, коли:
@@ -92,9 +92,7 @@ export const App = () => {
             <Route
               path="*"
               element={
-                <div>
-                  Page not found <Link to="/">Go Home</Link>{' '}
-                </div>
+                <Navigate to="/" />
               }
             />
           </Routes>

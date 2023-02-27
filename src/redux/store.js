@@ -16,7 +16,7 @@ import { postsReducer } from './postsSlice';
 const postsReducerConfig = {
   key: 'user',
   storage,
-  whitelist: ['testInputText', 'details']
+  whitelist: ['comments']
 };
 
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const requestPosts = async () => {
   const { data } = await axios.get(
-    'https://jsonplaceholder.typicode.com/posts'
+    `${process.env.REACT_APP__API_DOMAIN}/posts`
   );
 
   return data;
@@ -10,7 +10,7 @@ export const requestPosts = async () => {
 
 export const requestPostsById = async (postId = '1') => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com/posts/${postId}`
+    `${process.env.REACT_APP__API_DOMAIN}/posts/${postId}`
   );
 
   return data;
@@ -19,7 +19,7 @@ export const requestPostsById = async (postId = '1') => {
 
 export const requestPostDetails = async (postId = '1') => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com/posts/${postId}`
+    `${process.env.REACT_APP__API_DOMAIN}/posts/${postId}`
   );
 
   return data;
@@ -27,7 +27,7 @@ export const requestPostDetails = async (postId = '1') => {
 
 export const requestComments = async (postId = '1') => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com/posts/${postId}/comments`
+    `${process.env.REACT_APP__API_DOMAIN}/posts/${postId}/comments`
   );
 
   return data;

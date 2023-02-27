@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getPostComments, getPostDetails, getPosts, getPostsById } from './operations';
 
 const initialState = {
-  testInputText: '',
   details: null,
   comments: null,
   posts: null,
@@ -16,44 +16,57 @@ const postsSlice = createSlice({
   initialState: initialState,
   // Об'єкт редюсерів
   reducers: {
-    setTestInputText(state, action) {
-      state.testInputText = action.payload;
-    },
-    setComments(state, action) {
-      // action - { type: "posts/setComments", payload: [{}, {}, ..., {}] }
-      state.comments = action.payload;
-    },
-    clearComments(state) {
-      // action - { type: "posts/clearComments" }
-      state.comments = null;
-    },
-    setDetails(state, action) {
-      // action - { type: "posts/setDetails", payload: {...} }
-      state.details = action.payload;
-    },
-    setPosts(state, action) {
-      // action - { type: "posts/setPosts", payload: [{}, {}, ..., {}] }
-      state.posts = action.payload;
-    },
-    setIsLoading(state, action) {
-      // action - { type: "posts/setIsLoading", payload: true }
-      state.isLoading = action.payload;
-    },
-    setError(state, action) {
-      state.error = action.payload;
-    },
   },
+  extraReducers: builder =>
+    builder
+      // ----- Home Page -----
+
+      .addCase(getPosts.pending, pendingHandler)
+      .addCase(getPosts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.posts = action.payload;
+      })
+      .addCase(getPosts.rejected, rejectHandler)
+
+      // ----- Search Page -----
+
+      .addCase(getPostsById.pending, pendingHandler)
+      .addCase(getPostsById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.posts = action.payload;
+      })
+      .addCase(getPostsById.rejected, rejectHandler)
+
+      // ----- Post Details Page -----
+
+      .addCase(getPostDetails.pending, pendingHandler)
+      .addCase(getPostDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.details = action.payload;
+      })
+      .addCase(getPostDetails.rejected, rejectHandler)
+      
+      // ----- Post Comments Page -----
+
+      .addCase(getPostComments.pending, pendingHandler)
+      .addCase(getPostComments.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.comments = action.payload;
+      })
+      .addCase(getPostComments.rejected, rejectHandler)
+      ,
 });
 
+function pendingHandler(state) {
+  state.isLoading = true;
+  state.error = null;
+}
+function rejectHandler(state, action) {
+  state.isLoading = false;
+  state.error = action.payload;
+}
+
 // Генератори екшенів(інструкцій)
-export const {
-  setTestInputText,
-  clearComments,
-  setComments,
-  setDetails,
-  setPosts,
-  setIsLoading,
-  setError,
-} = postsSlice.actions;
+// export const {} = postsSlice.actions;
 // Експортуємо налаштований редюсер слайсу
 export const postsReducer = postsSlice.reducer;

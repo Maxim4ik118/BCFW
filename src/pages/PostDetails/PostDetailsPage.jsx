@@ -12,8 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import CommentsPage from 'pages/Comments/CommentsPage';
 import Loader from 'components/Loader/Loader';
 
-import { requestPostDetails } from 'services/api';
-import { setDetails, setError, setIsLoading } from 'redux/postsSlice';
+import { getPostDetails } from 'redux/operations';
 
 const LazyCommentsPage = lazy(() => import('pages/Comments/CommentsPage'));
 
@@ -21,30 +20,15 @@ function PostDetailsPage() {
   const { postId } = useParams();
   const location = useLocation();
 
-  // const [details, setDetails] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState(null);
   const details = useSelector(state => state.postData.details);
   const isLoading = useSelector(state => state.postData.isLoading);
   const error = useSelector(state => state.postData.error);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchPostDetails(postId) {
-      try {
-        dispatch(setIsLoading(true));
+    if(postId === null) return;
 
-        const details = await requestPostDetails(postId);
-
-        dispatch(setDetails(details));
-      } catch (error) {
-        dispatch(setError(error.message));
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    }
-
-    fetchPostDetails(postId);
+    dispatch(getPostDetails(postId));
   }, [postId, dispatch]);
 
   const isCommentsVisible = location.pathname.includes('comments');
