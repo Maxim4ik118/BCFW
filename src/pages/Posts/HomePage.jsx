@@ -5,14 +5,15 @@ import Item from 'components/ListItem/Item';
 import Loader from 'components/Loader/Loader';
 
 import { getPosts } from 'redux/operations';
+import { selectError, selectIsLoading, selectPosts } from 'redux/selectors';
 
 
 import { PostsList } from 'App.styled';
 
 function HomePage() {
-  const posts = useSelector(state => state.postData.posts);
-  const isLoading = useSelector(state => state.postData.isLoading);
-  const error = useSelector(state => state.postData.error);
+  const posts = useSelector(selectPosts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -4,15 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from 'components/Loader/Loader';
 
+import { selectComments, selectError, selectIsLoading } from 'redux/selectors';
 import { getPostComments } from 'redux/operations';
 
 import { CommentsList } from 'App.styled';
 
 function CommentsPage() {
   const { postId } = useParams();
-  const comments = useSelector(state => state.postData.comments);
-  const isLoading = useSelector(state => state.postData.isLoading);
-  const error = useSelector(state => state.postData.error);
+  const comments = useSelector(selectComments);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
   useEffect(() => {

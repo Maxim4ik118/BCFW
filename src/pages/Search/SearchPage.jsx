@@ -8,12 +8,13 @@ import Loader from 'components/Loader/Loader';
 import { getPostsById } from 'redux/operations';
 
 import { PostsList } from 'App.styled';
+import { selectError, selectIsLoading, selectPosts } from 'redux/selectors';
 
 
 function SearchPage() {
-  const posts = useSelector(state => state.postData.posts);
-  const isLoading = useSelector(state => state.postData.isLoading);
-  const error = useSelector(state => state.postData.error);
+  const posts = useSelector(selectPosts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
