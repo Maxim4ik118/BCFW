@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyledLoader } from './Styled';
 
-function Loader() {
+function Loader({ className }) {
   return (
-    <StyledLoader>
+    <StyledLoader className={className}>
       <div />
     </StyledLoader>
   );

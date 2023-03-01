@@ -1,38 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import {
-  persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { contactReducer } from './contactsSlice/contactSlice';
+import { userReducer } from './userSlice/userSlice';
 
-import { postsReducer } from './postsSlice';
-
-const postsReducerConfig = {
-  key: 'user',
-  storage,
-  whitelist: ['comments']
-};
-
-
-export const store = configureStore({
-  reducer: {
-    postData: persistReducer(postsReducerConfig, postsReducer),
-  },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }),
+const rootReducer = combineReducers({
+  user: userReducer,
+  contacts: contactReducer,
 });
 
-export const persistor = persistStore(store);
+export const store = configureStore({
+  reducer: rootReducer,
+});
 
 // state = {
 //     postData: {
