@@ -27,6 +27,31 @@ export const registerRequest = createAsyncThunk(
     }
   }
 );
+export const logOutRequest = createAsyncThunk(
+  'user/logOut',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await UserAPI.logOut();
+      localStorage.removeItem('token');
+
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const getCurrentUserRequest = createAsyncThunk(
+  'user/getCurrent',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await UserAPI.getUserDetails();
+
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
   userData: {
@@ -67,10 +92,29 @@ const userSlice = createSlice({
         state.userData.name = action.payload.user.name;
         state.userData.email = action.payload.user.email;
       })
-      .addCase(registerRequest.rejected, rejectHandler),
+      .addCase(registerRequest.rejected, rejectHandler)
 
-  // ----- Get current user -----
-  // ----- Logout -----
+      // ----- Get current user -----
+
+      .addCase(getCurrentUserRequest.pending, pendingHandler)
+      .addCase(getCurrentUserRequest.fulfilled, (state, action) => {
+        state.status = 'resolved';
+        state.isLoggedIn = true;
+        state.userData.name = action.payload.name;
+        state.userData.email = action.payload.email;
+      })
+      .addCase(getCurrentUserRequest.rejected, rejectHandler)
+
+
+      // ----- Logout -----
+      .addCase(logOutRequest.pending, pendingHandler)
+      .addCase(logOutRequest.fulfilled, (state) => {
+        state.status = 'resolved';
+        state.isLoggedIn = false;
+        state.userData.name = null;
+        state.userData.email = null;
+      })
+      .addCase(logOutRequest.rejected, rejectHandler),
 });
 
 function pendingHandler(state) {

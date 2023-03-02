@@ -42,11 +42,11 @@ export const UserAPI = {
     const { data } = await $publicHost.post(`users/login`, formData);
     return data;
   },
-  async getUserDetailsRequest() {
+  async getUserDetails() {
     const { data } = await $privateHost.get(`/users/current`);
     return data;
   },
-  async userLogOutRequest() {
+  async logOut() {
     const { data } = await $privateHost.post(`/users/logout`);
     return data;
   },

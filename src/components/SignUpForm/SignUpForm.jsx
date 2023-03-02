@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectStatus } from 'redux/userSlice/selectors';
-import { Loader } from 'components';
+import { LoaderSpinner } from 'components';
 import { StyledForm } from './Styled';
 
 function SignUpForm({ onSubmit, isLoginForm = false }) {
@@ -62,11 +62,14 @@ function SignUpForm({ onSubmit, isLoginForm = false }) {
         />
       </label>
 
-      <button disabled={status === 'pending'} type="submit">
-        {/* {status === 'pending' && <StyledFormLoader />} */}
+      <button
+        className="form-btn"
+        disabled={status === 'pending'}
+        type="submit"
+      >
+        {status === 'pending' && <LoaderSpinner />}
         {isLoginForm ? 'Sign In' : 'Sign Up'}
       </button>
-      {status === 'pending' && <Loader />}
     </StyledForm>
   );
 }

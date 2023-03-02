@@ -20,5 +20,20 @@ export const StyledForm = styled.form`
     text-align: center;
     margin: 0;
   }
+  .form-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 25px;
+    border: 1px solid transparent;
+    transition: border 0.3s;
+    background-color: yellowgreen;
+    border-radius: 8px;
+    cursor: pointer;
+    gap: 15px;
+    &:hover,
+    &:focus {
+      border: 1px solid #1f00e7;
+    }
+  }
 `;
-
