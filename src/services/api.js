@@ -1,14 +1,14 @@
 import axios from 'axios';
 
 const $publicHost = axios.create({
-  baseURL: "https://connections-api.herokuapp.com",
+  baseURL: process.env.REACT_APP__API_DOMAIN,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 const $privateHost = axios.create({
-  baseURL: "https://connections-api.herokuapp.com",
+  baseURL: process.env.REACT_APP__API_DOMAIN,
   headers: {
     'Content-Type': 'application/json',
   },
